@@ -1,6 +1,5 @@
 import express from "express"
 import db from "./routes/db-config.js"
-import cookie from "cookie-parser"
 import router from "./routes/routes.js"
 const app = express();
 const PORT = 3000;
