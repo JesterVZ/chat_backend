@@ -15,23 +15,30 @@ const register = async(req, res) => {
         return res.json(responseData);
     } else {
         db.query('SELECT email FROM `users` WHERE email = ?', [body.email], async(err, result) => {
-            console.log(body.email);
-            console.log(result);
             if(err){
                 returnData(res, 300, err, null);
             }
             if(result[0]){
                 returnData(res, 300, "Пользователь с таким email уже зарегестрирован", null);
             } else {
-                const hashedPassword = bcrypt.hash(body.password, 8);
-                db.query('INSERT INTO `users` SET ?', {login: body.login, email: body.email, password: hashedPassword, phone: body.phone, country: body.country, city: body.city}, (error, result) => {
-                    if(error){
+                db.query('SELECT login FROM `users` WHERE login = ?', [body.login], async(err, result) => {
+                    if(err){
                         returnData(res, 300, err, null);
-                    } else {
-                        returnData(res, 200, null, "Регистрация прошла успешно!");
                     }
-
-                });
+                    if(result[0]){
+                        returnData(res, 300, "Пользователь с таким логином уже зарегестрирован", null);
+                    } else {
+                        const hashedPassword = bcrypt.hash(body.password, 8);
+                        db.query('INSERT INTO `users` SET ?', {login: body.login, email: body.email, password: hashedPassword, phone: body.phone, country: body.country, city: body.city}, (error, result) => {
+                            if(error){
+                                returnData(res, 300, err, null);
+                            } else {
+                                returnData(res, 200, null, "Регистрация прошла успешно!");
+                            }
+        
+                        });
+                    }
+                })
             }
         });
     }
