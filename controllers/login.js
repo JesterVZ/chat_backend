@@ -34,7 +34,7 @@ const login = async (req, res) => {
                             "city":  result[0].city
 
                         }, process.env.JWT_SECRET)
-                        returnData(res, 200, accessToken, null);
+                        returnData(res, 200, null, accessToken);
                     } else {
                         returnData(res, 300, "Неверный логин или пароль", null);
                     }
