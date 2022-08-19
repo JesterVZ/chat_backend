@@ -23,13 +23,29 @@ const login = async (req, res) => {
                         returnData(res, 300, err, null);
                     }
                     if(compareRes){
-                        returnData(res, 200, "Успешно!", null);
+                        const accessToken = jwt.sign({
+                            "id": result[0].id,
+                            "login": result[0].login,
+                            "email": result[0].email,
+                            "avatar": result[0].avatar,
+                            "status": result[0].status,
+                            "phone": result[0].phone,
+                            "country": result[0].country,
+                            "city":  result[0].city
+
+                        }, process.env.JWT_SECRET)
+                        returnData(res, 200, accessToken, null);
+                    } else {
+                        returnData(res, 300, "Неверный логин или пароль", null);
                     }
                 })
             }else {
-                returnData(res, 300, "Неверный логин или пароль", null);
+                res.statusCode = 300;
+                responseData["status-code"]=res.statusCode;
+                responseData["error"]="Неверный логин или пароль";
+                responseData["data"] = null;
+                return res.json(responseData);
             }
-            //bcrypt.compare(body.password, result[0].password)
 
         })
     }

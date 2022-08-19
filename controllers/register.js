@@ -14,29 +14,40 @@ const register = async(req, res) => {
         responseData["error"]="Введите пароль";
         return res.json(responseData);
     } else {
-        db.query('SELECT email FROM `users` WHERE email = ?', [body.email], async(err, result) => {
+        db.query('SELECT email FROM `users` WHERE email = ?', [body.email], async(err, result) => { //проверка по email
             if(err){
                 returnData(res, 300, err, null);
             }
             if(result[0]){
                 returnData(res, 300, "Пользователь с таким email уже зарегестрирован", null);
             } else {
-                db.query('SELECT login FROM `users` WHERE login = ?', [body.login], async(err, result) => {
+                db.query('SELECT login FROM `users` WHERE login = ?', [body.login], async(err, result) => { //проверка по Login
                     if(err){
                         returnData(res, 300, err, null);
                     }
                     if(result[0]){
                         returnData(res, 300, "Пользователь с таким логином уже зарегестрирован", null);
                     } else {
-                        const hashedPassword = bcrypt.hash(body.password, 8);
-                        db.query('INSERT INTO `users` SET ?', {login: body.login, email: body.email, password: hashedPassword, phone: body.phone, country: body.country, city: body.city}, (error, result) => {
-                            if(error){
+                        bcrypt.hash(body.password, 10, (err, hash) => {
+                            if(err){
                                 returnData(res, 300, err, null);
-                            } else {
-                                returnData(res, 200, null, "Регистрация прошла успешно!");
                             }
-        
+                            db.query('INSERT INTO `users` SET ?', {
+                                login: body.login, 
+                                email: body.email, 
+                                password: hash, 
+                                phone: body.phone, 
+                                country: body.country, 
+                                city: body.city}, (error, result) => {
+                                if(error){
+                                    returnData(res, 300, error, null);
+                                } else {
+                                    returnData(res, 200, null, "Регистрация прошла успешно!");
+                                }
+            
+                            });
                         });
+                        
                     }
                 })
             }
