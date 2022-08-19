@@ -12,13 +12,25 @@ const login = async (req, res) => {
         console.log(body);
         return returnData(res, 300, "Введите логин, email или пароль", null);
     } else {
-        db.query('SELECT login FROM `users` WHERE login = ?', [body.login], async(err, result) => {
+        db.query('SELECT * FROM `users` WHERE login = ?', [body.login], async(err, result) => {
             if(err){
                 returnData(res, 300, err, null);
             }
-            var a = !await bcrypt.compare(body.password, result[0].password)
+            if(result[0]){
+                console.log(result[0]);
+                bcrypt.compare(body.password, result[0].password, (err, compareRes) => {
+                    if(err){
+                        returnData(res, 300, err, null);
+                    }
+                    if(compareRes){
+                        returnData(res, 200, "Успешно!", null);
+                    }
+                })
+            }else {
+                returnData(res, 300, "Неверный логин или пароль", null);
+            }
+            //bcrypt.compare(body.password, result[0].password)
 
-            returnData(res, 200, null, a);
         })
     }
 }
