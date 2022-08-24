@@ -9,4 +9,5 @@ router.post('/reg', register);
 router.post('/login', login);
 router.post('/auth', auth);
 router.get('/get_chats', ChatsController.getChats)
+router.post('/create-chat', ChatsController.createChat)
 export default router
