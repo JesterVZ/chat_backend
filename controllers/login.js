@@ -31,7 +31,8 @@ const login = async (req, res) => {
                             "status": result[0].status,
                             "phone": result[0].phone,
                             "country": result[0].country,
-                            "city":  result[0].city
+                            "city":  result[0].city,
+                            "nickname": result[0].nickname
 
                         }, process.env.JWT_SECRET)
                         returnData(res, 200, null, accessToken);

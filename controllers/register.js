@@ -33,12 +33,14 @@ const register = async(req, res) => {
                                 returnData(res, 300, err, null);
                             }
                             db.query('INSERT INTO `users` SET ?', {
-                                login: body.login, 
+                                login: body.login,
+                                nickname: body.nickname,
                                 email: body.email, 
                                 password: hash, 
                                 phone: body.phone, 
                                 country: body.country, 
-                                city: body.city}, (error, result) => {
+                                city: body.city
+                            }, (error, result) => {
                                 if(error){
                                     returnData(res, 300, error, null);
                                 } else {
